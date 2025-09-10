@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Category\CreateCategory;
 use App\Actions\Category\DeleteCategory;
 use App\Actions\Category\ListCategory;
+use App\Actions\Category\ShowCategory;
 use App\Actions\Category\UpdateCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Categories\CategoryRequest;
@@ -133,6 +134,81 @@ class CategoryController extends Controller
             return response()->json([
                 'message' => 'Erro ao criar a categoria.',
                 'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/categories/{id}",
+     *   tags={"Categories"},
+     *   summary="Exibir categoria",
+     *   description="Busca uma categoria específica pelo ID.",
+     *   security={{"bearerAuth":{}}},
+     *
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID da categoria",
+     *
+     *     @OA\Schema(type="integer", example=1)
+     *   ),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Categoria encontrada",
+     *
+     *     @OA\JsonContent(
+     *       type="object",
+     *
+     *       @OA\Property(property="id", type="integer", example=1),
+     *       @OA\Property(property="name", type="string", example="Massas"),
+     *       @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-10T10:00:00Z"),
+     *       @OA\Property(property="updated_at", type="string", format="date-time", example="2025-09-10T11:00:00Z")
+     *     )
+     *   ),
+     *
+     *   @OA\Response(
+     *     response=404,
+     *     description="Categoria não encontrada",
+     *
+     *     @OA\JsonContent(
+     *       type="object",
+     *
+     *       @OA\Property(property="message", type="string", example="Categoria não encontrada.")
+     *     )
+     *   ),
+     *
+     *   @OA\Response(
+     *     response=500,
+     *     description="Erro interno ao buscar categoria",
+     *
+     *     @OA\JsonContent(
+     *       type="object",
+     *
+     *       @OA\Property(property="message", type="string", example="Erro ao buscar categoria."),
+     *       @OA\Property(property="error", type="string", example="Mensagem detalhada do erro")
+     *     )
+     *   )
+     * )
+     */
+    public function show(int $id, ShowCategory $action)
+    {
+        try {
+            $category = $action->execute($id);
+
+            if (! $category) {
+                return response()->json([
+                    'message' => 'Receita não encontrada.',
+                ], 404);
+            }
+
+            return response()->json($category, 200);
+
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Erro ao buscar Receita.',
             ], 500);
         }
     }

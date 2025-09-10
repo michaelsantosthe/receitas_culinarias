@@ -10,5 +10,5 @@ Route::middleware(['auth:sanctum', 'store.throttle'])->group(function () {
     Route::post('logout', [App\Http\Controllers\Api\Auth\LoginController::class, 'logout']);
     Route::resource('users', App\Http\Controllers\Api\UserController::class);
     Route::resource('categories', App\Http\Controllers\Api\CategoryController::class);
-
+    Route::resource('recipes', App\Http\Controllers\Api\RecipeController::class);
 });

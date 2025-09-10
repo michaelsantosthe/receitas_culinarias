@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\User\CreateUser;
 use App\Actions\User\DeleteUser;
 use App\Actions\User\ListUsers;
+use App\Actions\User\ShowUser;
 use App\Actions\User\UpdateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateUserRequest;
@@ -170,6 +171,82 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Erro ao criar usuário.',
                 'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/users/{id}",
+     *   tags={"Users"},
+     *   summary="Exibir usuário",
+     *   description="Busca um usuário específico pelo ID.",
+     *   security={{"bearerAuth":{}}},
+     *
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID do usuário",
+     *
+     *     @OA\Schema(type="integer", example=1)
+     *   ),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Usuário encontrado",
+     *
+     *     @OA\JsonContent(
+     *       type="object",
+     *
+     *       @OA\Property(property="id", type="integer", example=1),
+     *       @OA\Property(property="name", type="string", example="Michael Santos"),
+     *       @OA\Property(property="email", type="string", format="email", example="michael@example.com"),
+     *       @OA\Property(property="email_verified_at", type="string", format="date-time", example="2025-09-10T10:00:00Z"),
+     *       @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-09T10:00:00Z"),
+     *       @OA\Property(property="updated_at", type="string", format="date-time", example="2025-09-09T12:00:00Z")
+     *     )
+     *   ),
+     *
+     *   @OA\Response(
+     *     response=404,
+     *     description="Usuário não encontrado",
+     *
+     *     @OA\JsonContent(
+     *       type="object",
+     *
+     *       @OA\Property(property="message", type="string", example="Usuário não encontrado.")
+     *     )
+     *   ),
+     *
+     *   @OA\Response(
+     *     response=500,
+     *     description="Erro interno ao buscar usuário",
+     *
+     *     @OA\JsonContent(
+     *       type="object",
+     *
+     *       @OA\Property(property="message", type="string", example="Erro ao buscar Usuário.")
+     *     )
+     *   )
+     * )
+     */
+    public function show(int $id, ShowUser $action)
+    {
+        try {
+            $user = $action->execute($id);
+
+            if (! $user) {
+                return response()->json([
+                    'message' => 'Usuário não encontrado.',
+                ], 404);
+            }
+
+            return response()->json($user, 200);
+
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Erro ao buscar Usuário.',
             ], 500);
         }
     }
