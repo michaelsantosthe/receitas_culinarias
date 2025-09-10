@@ -7,8 +7,8 @@ use App\Actions\User\DeleteUser;
 use App\Actions\User\ListUsers;
 use App\Actions\User\UpdateUser;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateUserRequest;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Requests\User\UserRequest;
 use App\Http\Resources\UserResource;
 use Throwable;
 

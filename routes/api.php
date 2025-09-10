@@ -9,5 +9,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('logout', [App\Http\Controllers\Api\Auth\LoginController::class, 'logout']);
     Route::resource('users', App\Http\Controllers\Api\UserController::class);
+    Route::resource('categories', App\Http\Controllers\Api\CategoryController::class);
 
 });
