@@ -98,7 +98,12 @@ class RecipeController extends Controller
     public function store(RecipeRequest $request, CreateRecipe $action)
     {
         try {
-            $user = $action->execute($request->validated());
+            // Pega os dados validados
+            $data = $request->validated();
+
+            $data['user_id'] = $request->user()->id;
+
+            $action->execute($data);
 
             return response()->json([
                 'message' => 'Receita cadastrada com sucesso.',
@@ -111,6 +116,7 @@ class RecipeController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * @OA\Get(
@@ -156,7 +162,7 @@ class RecipeController extends Controller
         try {
             $recipe = $action->execute($id);
 
-            if (! $recipe) {
+            if (!$recipe) {
                 return response()->json([
                     'message' => 'Receita não encontrada.',
                 ], 404);
@@ -221,12 +227,13 @@ class RecipeController extends Controller
     {
         try {
             $data = $request->validated();
+            $data['user_id'] = $request->user()->id; // garante que só salva pro usuário logado
+
             $action->execute($id, $data);
 
             return response()->json([
                 'message' => 'Receita atualizada com sucesso.',
-            ], 200);
-
+            ]);
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Erro ao atualizar Receita.',
@@ -280,5 +287,38 @@ class RecipeController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/list_recipes",
+     *   tags={"Public Recipes"},
+     *   summary="Listagem pública de receitas",
+     *   description="Retorna uma lista de receitas disponível para visitantes (sem autenticação).",
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Lista de receitas públicas",
+     *
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(
+     *         @OA\Property(property="id", type="integer", example=1),
+     *         @OA\Property(property="name", type="string", example="Bolo de Cenoura"),
+     *         @OA\Property(property="preparation_time", type="integer", example=60),
+     *         @OA\Property(property="portion", type="integer", example=8),
+     *         @OA\Property(property="ingredients", type="string", example="3 ovos, 2 xícaras de farinha"),
+     *         @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-10T12:00:00Z")
+     *       )
+     *     )
+     *   )
+     * )
+     */
+
+    public function list_recipe(ListRecipe $action)
+    {
+        $recipes = $action->execute();
+
+        return response()->json($recipes);
     }
 }

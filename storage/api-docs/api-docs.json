@@ -1061,6 +1061,58 @@
                 ]
             }
         },
+        "/api/list_recipes": {
+            "get": {
+                "tags": [
+                    "Public Recipes"
+                ],
+                "summary": "Listagem pública de receitas",
+                "description": "Retorna uma lista de receitas disponível para visitantes (sem autenticação).",
+                "operationId": "09cb604195416ccc0de7484d6033c549",
+                "responses": {
+                    "200": {
+                        "description": "Lista de receitas públicas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Bolo de Cenoura"
+                                            },
+                                            "preparation_time": {
+                                                "type": "integer",
+                                                "example": 60
+                                            },
+                                            "portion": {
+                                                "type": "integer",
+                                                "example": 8
+                                            },
+                                            "ingredients": {
+                                                "type": "string",
+                                                "example": "3 ovos, 2 xícaras de farinha"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-09-10T12:00:00Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -1597,6 +1649,10 @@
         {
             "name": "Recipes",
             "description": "Recipes"
+        },
+        {
+            "name": "Public Recipes",
+            "description": "Public Recipes"
         },
         {
             "name": "Users",

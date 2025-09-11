@@ -21,7 +21,7 @@ class StoreRateLimit
             $request->user()?->id ?? $request->ip()
         );
 
-        if (RateLimiter::tooManyAttempts($key, 10)) {
+       if (RateLimiter::tooManyAttempts($key, 100)) {
             return response()->json([
                 'message' => 'Muitas tentativas. Aguarde alguns segundos.',
                 'retry_after' => RateLimiter::availableIn($key),
