@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [App\Http\Controllers\Api\Auth\LoginController::class, 'login']);
 Route::post('register', [App\Http\Controllers\Api\Auth\RegisterController::class, 'store']);
 Route::get('list_recipes', [App\Http\Controllers\Api\RecipeController::class, 'list_recipe']);
+Route::get('recipes/{id}/print', [App\Http\Controllers\Api\RecipeController::class, 'printRecipe']);
 
 Route::middleware(['auth:sanctum', 'store.throttle'])->group(function () {
 

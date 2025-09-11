@@ -49,7 +49,9 @@ a2enmod rewrite
 
 A documentação da API é gerada automaticamente via L5-Swagger
 .
-Para gerar/atualizar a doc: docker-compose exec app php artisan l5-swagger:generate
+Para gerar/atualizar a doc: 
+
+docker-compose exec app php artisan l5-swagger:generate
 
 Após isso, acesse a documentação no navegador:
 

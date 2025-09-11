@@ -1113,6 +1113,107 @@
                 }
             }
         },
+        "/api/recipes/{id}/print": {
+            "get": {
+                "tags": [
+                    "Recipes"
+                ],
+                "summary": "Imprimir receita",
+                "description": "Retorna os dados formatados de uma receita específica para impressão.",
+                "operationId": "84ce1214e5b38afca07b4102eea7e9af",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da receita",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Receita encontrada e pronta para impressão",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Lasanha à Bolonhesa"
+                                        },
+                                        "ingredients": {
+                                            "type": "string",
+                                            "example": "Massa de lasanha, molho bolonhesa, queijo mussarela"
+                                        },
+                                        "preparation_mode": {
+                                            "type": "string",
+                                            "example": "Monte camadas de massa, carne e queijo, leve ao forno."
+                                        },
+                                        "preparation_time": {
+                                            "type": "integer",
+                                            "example": 90
+                                        },
+                                        "portion": {
+                                            "type": "integer",
+                                            "example": 6
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-09-09T10:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Receita não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Receita não encontrada."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao gerar impressão da receita",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erro ao gerar impressão da receita."
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Mensagem detalhada do erro"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [

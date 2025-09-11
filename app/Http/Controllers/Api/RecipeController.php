@@ -117,7 +117,6 @@ class RecipeController extends Controller
         }
     }
 
-
     /**
      * @OA\Get(
      *   path="/api/recipes/{id}",
@@ -302,7 +301,9 @@ class RecipeController extends Controller
      *
      *     @OA\JsonContent(
      *       type="array",
+     *
      *       @OA\Items(
+     *
      *         @OA\Property(property="id", type="integer", example=1),
      *         @OA\Property(property="name", type="string", example="Bolo de Cenoura"),
      *         @OA\Property(property="preparation_time", type="integer", example=60),
@@ -314,11 +315,86 @@ class RecipeController extends Controller
      *   )
      * )
      */
-
     public function list_recipe(ListRecipe $action)
     {
         $recipes = $action->execute();
 
         return response()->json($recipes);
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/recipes/{id}/print",
+     *   tags={"Recipes"},
+     *   summary="Imprimir receita",
+     *   description="Retorna os dados formatados de uma receita específica para impressão.",
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="ID da receita",
+     *     @OA\Schema(type="integer", example=1)
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Receita encontrada e pronta para impressão",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="id", type="integer", example=1),
+     *       @OA\Property(property="name", type="string", example="Lasanha à Bolonhesa"),
+     *       @OA\Property(property="ingredients", type="string", example="Massa de lasanha, molho bolonhesa, queijo mussarela"),
+     *       @OA\Property(property="preparation_mode", type="string", example="Monte camadas de massa, carne e queijo, leve ao forno."),
+     *       @OA\Property(property="preparation_time", type="integer", example=90),
+     *       @OA\Property(property="portion", type="integer", example=6),
+     *       @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-09T10:00:00Z")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="Receita não encontrada",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="message", type="string", example="Receita não encontrada.")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=500,
+     *     description="Erro ao gerar impressão da receita",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="message", type="string", example="Erro ao gerar impressão da receita."),
+     *       @OA\Property(property="error", type="string", example="Mensagem detalhada do erro")
+     *     )
+     *   )
+     * )
+     */
+
+    public function printRecipe(int $id, ShowRecipe $action)
+    {
+        try {
+            $recipe = $action->execute($id);
+
+            if (!$recipe) {
+                return response()->json([
+                    'message' => 'Receita não encontrada.',
+                ], 404);
+            }
+
+            return response()->json([
+                'id' => $recipe->id,
+                'name' => $recipe->name,
+                'ingredients' => $recipe->ingredients,
+                'preparation_mode' => $recipe->preparation_mode,
+                'preparation_time' => $recipe->preparation_time,
+                'portion' => $recipe->portion,
+                'created_at' => $recipe->created_at,
+            ], 200);
+
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Erro ao gerar impressão da receita.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
