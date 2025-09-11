@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Recipe\CreateRecipe;
 use App\Actions\Recipe\DeleteRecipe;
 use App\Actions\Recipe\ListRecipe;
-use App\Actions\Recipe\ShowRecipe;
 use App\Actions\Recipe\UpdateRecipe;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recipe\RecipeRequest;
 use App\Http\Requests\Recipe\UpdateRecipeRequest;
+use App\Models\Recipe;
 use Throwable;
 
 class RecipeController extends Controller
@@ -98,12 +98,7 @@ class RecipeController extends Controller
     public function store(RecipeRequest $request, CreateRecipe $action)
     {
         try {
-            // Pega os dados validados
-            $data = $request->validated();
-
-            $data['user_id'] = $request->user()->id;
-
-            $action->execute($data);
+            $action->execute($request->validated());
 
             return response()->json([
                 'message' => 'Receita cadastrada com sucesso.',
@@ -156,25 +151,9 @@ class RecipeController extends Controller
      *   @OA\Response(response=500, description="Erro ao buscar a receita")
      * )
      */
-    public function show(int $id, ShowRecipe $action)
+    public function show(Recipe $recipe)
     {
-        try {
-            $recipe = $action->execute($id);
-
-            if (!$recipe) {
-                return response()->json([
-                    'message' => 'Receita não encontrada.',
-                ], 404);
-            }
-
-            return response()->json($recipe, 200);
-
-        } catch (Throwable $e) {
-            return response()->json([
-                'message' => 'Erro ao buscar Receita.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json($recipe, 200);
     }
 
     /**
@@ -225,10 +204,7 @@ class RecipeController extends Controller
     public function update(int $id, UpdateRecipeRequest $request, UpdateRecipe $action)
     {
         try {
-            $data = $request->validated();
-            $data['user_id'] = $request->user()->id; // garante que só salva pro usuário logado
-
-            $action->execute($id, $data);
+            $action->execute($id, $request->validated());
 
             return response()->json([
                 'message' => 'Receita atualizada com sucesso.',
@@ -315,7 +291,7 @@ class RecipeController extends Controller
      *   )
      * )
      */
-    public function list_recipe(ListRecipe $action)
+    public function listRecipe(ListRecipe $action)
     {
         $recipes = $action->execute();
 
@@ -328,18 +304,23 @@ class RecipeController extends Controller
      *   tags={"Recipes"},
      *   summary="Imprimir receita",
      *   description="Retorna os dados formatados de uma receita específica para impressão.",
+     *
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
      *     description="ID da receita",
+     *
      *     @OA\Schema(type="integer", example=1)
      *   ),
+     *
      *   @OA\Response(
      *     response=200,
      *     description="Receita encontrada e pronta para impressão",
+     *
      *     @OA\JsonContent(
      *       type="object",
+     *
      *       @OA\Property(property="id", type="integer", example=1),
      *       @OA\Property(property="name", type="string", example="Lasanha à Bolonhesa"),
      *       @OA\Property(property="ingredients", type="string", example="Massa de lasanha, molho bolonhesa, queijo mussarela"),
@@ -349,52 +330,49 @@ class RecipeController extends Controller
      *       @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-09T10:00:00Z")
      *     )
      *   ),
+     *
      *   @OA\Response(
      *     response=404,
      *     description="Receita não encontrada",
+     *
      *     @OA\JsonContent(
      *       type="object",
+     *
      *       @OA\Property(property="message", type="string", example="Receita não encontrada.")
      *     )
      *   ),
+     *
      *   @OA\Response(
      *     response=500,
      *     description="Erro ao gerar impressão da receita",
+     *
      *     @OA\JsonContent(
      *       type="object",
+     *
      *       @OA\Property(property="message", type="string", example="Erro ao gerar impressão da receita."),
      *       @OA\Property(property="error", type="string", example="Mensagem detalhada do erro")
      *     )
      *   )
      * )
      */
-
-    public function printRecipe(int $id, ShowRecipe $action)
+    public function printRecipe(int $id)
     {
-        try {
-            $recipe = $action->execute($id);
+        $recipe = Recipe::find($id);
 
-            if (!$recipe) {
-                return response()->json([
-                    'message' => 'Receita não encontrada.',
-                ], 404);
-            }
-
+        if (! $recipe) {
             return response()->json([
-                'id' => $recipe->id,
-                'name' => $recipe->name,
-                'ingredients' => $recipe->ingredients,
-                'preparation_mode' => $recipe->preparation_mode,
-                'preparation_time' => $recipe->preparation_time,
-                'portion' => $recipe->portion,
-                'created_at' => $recipe->created_at,
-            ], 200);
-
-        } catch (Throwable $e) {
-            return response()->json([
-                'message' => 'Erro ao gerar impressão da receita.',
-                'error' => $e->getMessage(),
-            ], 500);
+                'message' => 'Receita não encontrada.',
+            ], 404);
         }
+
+        return response()->json([
+            'id' => $recipe->id,
+            'name' => $recipe->name,
+            'ingredients' => $recipe->ingredients,
+            'preparation_mode' => $recipe->preparation_mode,
+            'preparation_time' => $recipe->preparation_time,
+            'portion' => $recipe->portion,
+            'created_at' => $recipe->created_at,
+        ], 200);
     }
 }

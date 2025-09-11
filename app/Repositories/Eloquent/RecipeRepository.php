@@ -8,9 +8,12 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class RecipeRepository implements RecipeRepositoryInterface
 {
-    public function allPaginated(int $perPage = 15): LengthAwarePaginator
+    public function allPaginated(?int $userId = null, ?int $perPage = 15): LengthAwarePaginator
     {
-        return Recipe::paginate($perPage);
+        return Recipe::query()
+            ->when($userId, fn ($query) => $query->where('user_id', $userId))
+            ->latest()
+            ->paginate($perPage);
     }
 
     public function find(int $id): ?Recipe

@@ -1068,7 +1068,7 @@
                 ],
                 "summary": "Listagem pública de receitas",
                 "description": "Retorna uma lista de receitas disponível para visitantes (sem autenticação).",
-                "operationId": "09cb604195416ccc0de7484d6033c549",
+                "operationId": "9855b6f4a7de081672c1db3f8d56db60",
                 "responses": {
                     "200": {
                         "description": "Lista de receitas públicas",

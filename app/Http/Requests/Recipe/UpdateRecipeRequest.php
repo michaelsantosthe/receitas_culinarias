@@ -23,13 +23,13 @@ class UpdateRecipeRequest extends FormRequest
     {
 
         return [
-            'name' => 'sometimes|string|max:255',
-            'user_id' => 'sometimes|exists:users,id',
-            'category_id' => 'sometimes|exists:categories,id',
-            'preparation_time' => 'sometimes|integer|min:1',
-            'portion' => 'sometimes|integer|min:1',
-            'preparation_mode' => 'sometimes|string',
-            'ingredients' => 'sometimes|string',
+            'name' => ['sometimes', 'string', 'max:255'],
+            'user_id' => ['sometimes', 'exists:users,id'],
+            'category_id' => ['sometimes', 'exists:categories,id'],
+            'preparation_time' => ['sometimes', 'integer', 'min:1'],
+            'portion' => ['sometimes', 'integer', 'min:1'],
+            'preparation_mode' => ['sometimes', 'string'],
+            'ingredients' => ['sometimes', 'string'],
         ];
 
     }

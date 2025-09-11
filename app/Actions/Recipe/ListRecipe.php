@@ -3,6 +3,7 @@
 namespace App\Actions\Recipe;
 
 use App\Repositories\Eloquent\RecipeRepository;
+use Auth;
 
 class ListRecipe
 {
@@ -10,6 +11,8 @@ class ListRecipe
 
     public function execute(int $perPage = 15)
     {
-        return $this->repository->allPaginated($perPage);
+        $userId = Auth::id();
+
+        return $this->repository->allPaginated($userId, $perPage);
     }
 }

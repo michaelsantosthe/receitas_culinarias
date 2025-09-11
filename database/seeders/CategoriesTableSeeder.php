@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
+use DB;
 use Illuminate\Database\Seeder;
 
 class CategoriesTableSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
         $categories = [
             'Carne bovina assada',
@@ -112,8 +112,12 @@ class CategoriesTableSeeder extends Seeder
             'Gelato italiano',
         ];
 
-        foreach ($categories as $name) {
-            Category::firstOrCreate(['name' => $name]);
-        }
+        DB::table('categories')->insert(
+            collect($categories)->map(fn ($name) => [
+                'name' => $name,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->toArray()
+        );
     }
 }

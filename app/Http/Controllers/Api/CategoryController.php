@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Category\CreateCategory;
 use App\Actions\Category\DeleteCategory;
 use App\Actions\Category\ListCategory;
-use App\Actions\Category\ShowCategory;
 use App\Actions\Category\UpdateCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Categories\CategoryRequest;
 use App\Http\Requests\Categories\UpdateCategoryRequest;
+use App\Models\Category;
 use Throwable;
 
 class CategoryController extends Controller
@@ -124,7 +124,7 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request, CreateCategory $action)
     {
         try {
-            $user = $action->execute($request->validated());
+            $action->execute($request->validated());
 
             return response()->json([
                 'message' => 'Categoria cadastrada com sucesso.',
@@ -193,24 +193,9 @@ class CategoryController extends Controller
      *   )
      * )
      */
-    public function show(int $id, ShowCategory $action)
+    public function show(Category $category)
     {
-        try {
-            $category = $action->execute($id);
-
-            if (! $category) {
-                return response()->json([
-                    'message' => 'Receita não encontrada.',
-                ], 404);
-            }
-
-            return response()->json($category, 200);
-
-        } catch (Throwable $e) {
-            return response()->json([
-                'message' => 'Erro ao buscar Receita.',
-            ], 500);
-        }
+        return response()->json($category, 200);
     }
 
     /**

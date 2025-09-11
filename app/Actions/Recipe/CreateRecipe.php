@@ -13,6 +13,9 @@ class CreateRecipe
 
     public function execute(array $data): Recipe
     {
-        return $this->repository->create($data);
+        return $this->repository->create([
+            ...$data,
+            'user_id' => auth()->user()->id,
+        ]);
     }
 }

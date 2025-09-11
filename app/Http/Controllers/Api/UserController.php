@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Actions\User\CreateUser;
 use App\Actions\User\DeleteUser;
 use App\Actions\User\ListUsers;
-use App\Actions\User\ShowUser;
 use App\Actions\User\UpdateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\UserRequest;
-use App\Http\Resources\UserResource;
+use App\Models\User;
 use Throwable;
 
 class UserController extends Controller
@@ -91,7 +90,7 @@ class UserController extends Controller
     {
         $users = $action->execute();
 
-        return UserResource::collection($users)
+        return $users->toResourceCollection()
             ->response()
             ->setStatusCode(201);
     }
@@ -164,7 +163,7 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'Usuário cadastrado com sucesso.',
-                'data' => new UserResource($user),
+                'data' => $user->toResource(),
             ], 201);
 
         } catch (Throwable $e) {
@@ -231,24 +230,9 @@ class UserController extends Controller
      *   )
      * )
      */
-    public function show(int $id, ShowUser $action)
+    public function show(User $user)
     {
-        try {
-            $user = $action->execute($id);
-
-            if (! $user) {
-                return response()->json([
-                    'message' => 'Usuário não encontrado.',
-                ], 404);
-            }
-
-            return response()->json($user, 200);
-
-        } catch (Throwable $e) {
-            return response()->json([
-                'message' => 'Erro ao buscar Usuário.',
-            ], 500);
-        }
+        return response()->json($user, 200);
     }
 
     /**
@@ -338,8 +322,7 @@ class UserController extends Controller
     public function update(int $id, UpdateUserRequest $request, UpdateUser $action)
     {
         try {
-            $data = $request->validated();
-            $action->execute($id, $data);
+            $action->execute($id,  $request->validated());
 
             return response()->json([
                 'message' => 'Usuário atualizado com sucesso.',

@@ -22,12 +22,12 @@ class RecipeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'preparation_time' => 'required|integer|min:1',
-            'portion' => 'required|integer|min:1',
-            'preparation_mode' => 'required|string',
-            'ingredients' => 'required|string',
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'preparation_time' => ['required', 'integer', 'min:1'],
+            'portion' => ['required', 'integer', 'min:1'],
+            'preparation_mode' => ['required', 'string'],
+            'ingredients' => ['required', 'string'],
         ];
     }
 }

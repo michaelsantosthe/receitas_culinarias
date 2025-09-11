@@ -7,7 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface RecipeRepositoryInterface
 {
-    public function allPaginated(int $perPage = 15): LengthAwarePaginator;
+    public function allPaginated(int $userId, int $perPage = 15): LengthAwarePaginator;
 
     public function find(int $id): ?Recipe;
 
